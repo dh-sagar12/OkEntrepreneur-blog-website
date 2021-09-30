@@ -1,0 +1,81 @@
+{% extends 'basic.html' %} {% block title %}Blog- OkEntrepreneur{% endblock title %} 
+{% load static %}
+{% block css %}{% static 'css/style.css' %} {% endblock css %} 
+{% block blogActive %} active {% endblock blogActive %} 
+{% block body %} 
+<main class="container mt-4">
+
+ <!--section for feature blog starts here-->
+    <div class="row  mb-4 text-white rounded bg-dark featurePost">
+        <div class="col-md-6 p-4 featureBlogDetial" href='{{fPost.get_absolute_url}}'>
+            <span class="badge bg-light text-dark">Featured Blog</span>
+            <h1 class="display-6 fst-italic fw-bolder">{{fPost.title}}</h1>
+            <p class="lead my-3">{{fPost.content|truncatechars:150| safe }}</p>
+            <p class="lead mb-0"><a href="{{fPost.get_absolute_url}}" class="text-white fw-bold">Continue reading...</a>
+            </p>
+        </div>
+        <div class=" col featureImg px-0"  href='{{fPost.get_absolute_url}}'>
+            <a href="{{fPost.get_absolute_url}}"><img alt="This is feature image" src="/media/{{fPost.thumbnail}}" ></a>
+        </div>
+    </div>
+ <!--section for feature blog ends here-->
+
+
+ <!--section for all blog start here here-->
+    <div class="container">
+        <h2>Our Latest Blogs</h2>
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+
+            <!--all displaying blogs column start here -->
+            {% for item in allPosts %}
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    <a href="{{item.get_absolute_url}}" style='color: #000000; text-decoration: initial;'>
+                        <figure class="thumbnailFigure">
+                            <img src='/media/{{item.thumbnail}}' class="bd-placeholder-img card-img-top" style='max-width:100%; height:auto;'role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false">
+                            <title>Placeholder</title>
+                            <rect width="100%" height="100%" fill="#55595c"></rect>
+                            </img>
+                        </figure>
+                        <div class="card-body">
+                        <a href='https://getbootstrap.com/docs/5.0/components/badge/'><span class="badge bg-dark">{{item.category}}</span></a>
+                             <a href="{{item.get_absolute_url}}" style='color: #000000; text-decoration: initial;'><h6>{{item.title}}</h6></a>
+                            <div class='text-muted'>
+                                <small class="text-muted">{{item.upload_date}}</small>
+                                <i class="far fa-eye ml-3 " style='margin-left:6rem;'></i> {{item.viewsCount}}
+                            </div>
+                            <p class="card-text">{{item.content| truncatechars:120| safe }}</p>
+                            <div class="d-flex justify-content-left align-items-left">
+                                <div class="btn-group my-2">
+                                    <a href="{{item.get_absolute_url}}" type="button" class="btn btn-md btn-outline-secondary">Read More</a>
+                                </div>
+
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+            <!--all displaying blogs column end here -->
+
+
+            <!--paginator buttons start here-->
+            <div class=" col-lg offset mb-4">
+                {% if allPosts.has_previous %}
+                    <a class="btn btn-md btn-outline-secondary float-start" href="/blog?page={{allPosts.previous_page_number}}">← Previous </a>
+                {% endif %}
+                {% if allPosts.has_next %}
+                    <a class=" btn btn-md btn-outline-secondary float-end" href="/blog?page={{allPosts.next_page_number}}">Next →  </a>
+                {% endif %}
+            </div>
+            <!--paginator buttons end here-->
+
+
+        </div>
+    </div>
+ <!--section for all blog ends here here-->
+
+
+
+</main>
+{% endblock body %}

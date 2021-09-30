@@ -1,0 +1,201 @@
+{% extends 'basic.html' %} {% block title %}{{post.title}}{% endblock title %} {% block blogActive %} active {% endblock blogActive %} {% block body %} {% load humanize%} {% load extras %}
+<div class="container">
+    <main role="main" class="container my-4">
+        <div class="row">
+
+            <div class="col-md-8 blog-main">
+                <div class="blog-post">
+                    <h2 class="blog-post-title">{{post.title}}</h2>
+                    <div class=' mb-3 text-muted'>
+                        <small>{{post.upload_date}} by</small> <a href="#" style='text-decoration:none'>{{post.author}}
+                        </a>
+                        <i class="far fa-eye ml-3 " style='margin-left:2rem;'></i> {{post.viewsCount}}
+                    </div>
+                    <img src="/media/{{post.thumbnail}}" style='max-width:100%; height:auto;' alt="This is thumbnail">
+                    <P> {{post.content| safe}} </P>
+                </div>
+
+
+                <!-- /.blog-post -->
+
+
+                <!-- blog pagination starts here -->
+                <nav class="blog-pagination">
+                    {% if post.get_previous_by_upload_date %}
+                    <a class="btn btn-outline-secondary float-end" href="{{post.get_previous_by_upload_date.slug}}">Next
+                        Blog →</a> {% endif %} {% if post.get_next_by_upload_date %}
+                    <a class="btn btn-outline-secondary float-start" href="{{post.get_next_by_upload_date.slug}}">←
+                        Previous Blog</a> {% endif %}
+                </nav>
+
+                <br>
+                <br>
+                <!-- blog pagination Ends here -->
+
+                <hr>
+                <!-- Comment box started here-->
+                <div>
+                    {% if user.is_authenticated %}
+                    <!--if user is logged in then show this -->
+                    <form action="postComment/" method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <h2><label for="comment" class="form-label">Post Comments</label></h2>
+                            <textarea class="form-control" name='comment' placeholder="Enter your comment here" rows="3" required></textarea>
+                            <input type="hidden" name="post_id" value="{{post.post_id}}">
+                            <input type="hidden" name="parentCommentId" value="">
+                        </div>
+                        <input type="submit" class="btn btn-outline-secondary">
+                    </form>
+
+                    {% else %}
+                    <!-- if user is not logged in show this-->
+
+                    <h2>You must be logged in to post comments</h2>
+                    <!--Launch Login Modal Button-->
+                    <button type="button" class="btn btn-outline-success ms-2" data-bs-toggle="modal" data-bs-target="#loginModal">Log In </button>
+                    <!--Launch sign up modal button-->
+                    <button type="button" class="btn btn-outline-success ms-2" data-bs-toggle="modal" data-bs-target="#signModal">Sign Up</button> {% endif %}
+                </div>
+                <br>
+                <!-- Comment box ends here-->
+
+
+                <!--comment section started from here -->
+                <h4>Comments({{comments.count}})</h4>
+                {% for comment in comments %}
+                <div class="row my-3 ">
+                    <div class="col-md-1 userImg ">
+                        <span style="font-size: 3rem;" class='me-4 '>
+                            <i class="fas fa-user-circle"></i>
+                        </span>
+                    </div>
+                    <div class="col-md-11 mt-3 userCmt">
+                        <b class="fs-5"> {{comment.user.first_name| title }} {{comment.user.last_name| title }}</b><span class="ms-1 fs-6">{{comment.timestamp | naturaltime}}</span>
+                       
+                        <div class=' text-break'> {{comment.comment}} </div>
+
+
+                        <!--Reply button -->
+                        <div class="m-2">
+                            <a class="btn btn-sm btn-outline-secondary" data-bs-toggle="collapse" href="#comment{{comment.comment_id}}" role="button" aria-expanded="false" aria-controls="comment{{comment.comment_id}}">
+                                Reply
+                            </a>
+                        </div>
+
+                        {% if user.is_authenticated %} 
+                        <!--textarea for reply-->
+                        <div class="collapse" id="comment{{comment.comment_id}}">
+                            <form action="postComment/" method="post">
+                                {% csrf_token %}
+                                <div class="mb-2">
+                                    <textarea class="form-control" name='comment'  placeholder="Enter your comment here" rows="3" required></textarea>
+                                    <input type="hidden" name="parentCommentId" value="{{comment.comment_id}}">
+                                </div>
+                                <input type="hidden" name="post_id" value="{{post.post_id}}">
+                                <input type="submit" class="btn btn-sm btn-outline-secondary">
+                            </form>
+                        </div>
+                        {% else %}
+                        <div class="collapse" id="comment{{comment.comment_id}}">
+                                <h5 class='text-danger ms-4'>**You must be logged in to reply comments. Please Log in** </h5>
+
+                        </div>
+
+                        {% endif %}
+                        <!--textarea for reply ends here-->
+
+
+
+                        <!--All Replies of parent comment will be shown here-->
+                        {% for reply in replyDict|get_val:comment.comment_id %}
+                        <span class='border-start border-dark'>
+                            <div class="row  ms-4">
+                                <div class="col-md-1 mt-2 userImg">
+                                    <span style="font-size: 2.5rem;" class=''>
+                                        <i class="fas fa-user-circle"></i>
+                                    </span>
+                                </div>
+                                <div class="col-md-11 mt-3 userCmt">
+                                    <b class="fs-5"> {{reply.user.first_name| title }} {{reply.user.last_name| title }}</b><span class="ms-1 fs-6">{{reply.timestamp | naturaltime}}</span>
+                                    <!-- <div class='mb-1'>{{comment.timestamp | naturaltime}}</div> -->
+                                    <div class=' text-break'> {{reply.comment}} </div>
+                                </div>
+                            </div>
+                        </span>
+                        {% endfor %}
+                        <!--Replies section ends here-->
+                    </div>
+                </div>
+                {% endfor %}
+                <!--comment section ends here-->
+            </div>
+
+            <!-- /.blog-main -->
+
+            <aside class="col-md-4 blog-sidebar">
+                <div class="p-3 mb-3 bg-light rounded">
+                    <h4 class="font-italic">About</h4>
+                    <p class="mb-0">Etiam porta <em>sem malesuada magna</em> mollis euismod. Cras mattis consectetur purus sit amet fermentum. Aenean lacinia bibendum nulla sed consectetur.</p>
+                </div>
+
+                <div class="p-3">
+                    <h4 class="font-italic">Archives</h4>
+                    <ol class="list-unstyled mb-0">
+                        <li><a href="#">March 2014</a></li>
+                        <li><a href="#">February 2014</a></li>
+                        <li><a href="#">January 2014</a></li>
+                        <li><a href="#">December 2013</a></li>
+                        <li><a href="#">November 2013</a></li>
+                        <li><a href="#">October 2013</a></li>
+                        <li><a href="#">September 2013</a></li>
+                        <li><a href="#">August 2013</a></li>
+                        <li><a href="#">July 2013</a></li>
+                        <li><a href="#">June 2013</a></li>
+                        <li><a href="#">May 2013</a></li>
+                        <li><a href="#">April 2013</a></li>
+                    </ol>
+                </div>
+
+                <div class="p-3">
+                    <h4 class="font-italic">Elsewhere</h4>
+                    <ol class="list-unstyled">
+                        <li><a href="#">GitHub</a></li>
+                        <li><a href="#">Twitter</a></li>
+                        <li><a href="#">Facebook</a></li>
+                    </ol>
+                </div>
+            </aside>
+            <!-- /.blog-sidebar -->
+
+        </div>
+        <!-- /.row -->
+
+    </main>
+</div>
+
+{% block js %}
+<script>
+    userImg = document.querySelectorAll('userImg')
+    userCmt = document.querySelectorAll('userCmt')
+
+    Array.from(userImg).forEach((e)=>{
+        if (window.innerWidth <= 950) {
+            e.classList.remove('col-md-1')
+            e.classList.add('col-2')
+        }
+    })
+    Array.from(userCmt).forEach((e)=>{
+        if (window.innerWidth <= 950) {
+            e.classList.remove('col-md-11')
+            e.classList.add('col')
+        }
+    })
+
+    
+</script>
+
+{% endblock js %}
+
+
+{% endblock %}

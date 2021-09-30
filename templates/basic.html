@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- font-awesome css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous">
+
+    <link rel="stylesheet" href= "{% block css %} {% endblock css %}">
+
+    <title>{% block title %} {% endblock title %}</title>
+</head>
+
+<body>
+
+    <!-- navbar started here  -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">okEntrepreneur</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link {% block homeActive %}{% endblock homeActive %}" aria-current="page" href="/">Home</a>
+                    </li>
+                    <li class="nav-item ">
+                        <a class="nav-link {% block aboutActive %}{% endblock aboutActive %}" href="/about">About US</a>
+                    </li>
+                    <li class="nav-item ">
+                        <a class="nav-link {% block contactActive %}{% endblock contactActive %}" href="/contact">Contact US</a>
+                    </li>
+                    <li class="nav-item ">
+                        <a class="nav-link {% block blogActive %}{% endblock blogActive %}" href="/blog">Blogs</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav mb-2 mb-lg-0">
+                    <form class="d-flex" method='get' action='/blog/search/'>
+                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" id='query' name='query' Required='true'>
+                        <button class="btn btn-outline-success" type="submit">Search</button>
+                    </form>
+
+                    <!-- this is shown after some one is logged in in his account, start here-->
+                    {% if user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="far fa-user"></i> {{request.user| title}}
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="/logout">Log Out<i
+                                        class="ms-1 fas d-inline-flex fa-sign-out-alt"></i></a></li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <!-- this is shown after some one is logged in in his account, ends here -->
+
+
+                    <!--Launch Login Modal Button-->
+                    <button type="button" class="btn btn-outline-success ms-2" data-bs-toggle="modal" data-bs-target="#loginModal">Log In </button>
+
+
+                    <!--Launch sign up modal button-->
+                    <button type="button" class="btn btn-outline-success ms-2" data-bs-toggle="modal" data-bs-target="#signModal">Sign Up</button> {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- navbar ends here  -->
+
+
+    <!-- displaying messages  -->
+    <div id="displayMsg">
+        {% for message in messages %}
+        <div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
+            <div class="container">
+                {% if message.tags == 'danger' %}
+                <strong>Sorry!!</strong> {{message}} {% else %}
+                <strong>{{message.tags| capfirst}}!!</strong> {{message}} {% endif %}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <!-- display message ends Here -->
+
+
+
+    <!-- Modal  for sign UP-->
+    <div class="modal fade" id="signModal" tabindex="-1" aria-labelledby="signupModal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="signupModalTitle">SignUp Here</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="/signup/" method='post'>
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" placeholder="lowercase and alphanumeric not more than 10 character" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="fname">First Name</label>
+                            <input type="text" class="form-control" id="fname" name="fname" placeholder="Enter Your First Name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lname">Last Name</label>
+                            <input type="text" class="form-control" id="lname" name="lname" placeholder="Enter Your Last Name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email address</label>
+                            <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="pass1">Choose a password</label>
+                            <input type="password" class="form-control" id="pass1" name="pass1" placeholder="Choose Your Password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="pass2">Confirm Password</label>
+                            <input type="password" class="form-control" id="pass2" name="pass2" placeholder="Enter your password again" required>
+                        </div>
+                        {% csrf_token %}
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-outline-secondary">Submit</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Log In  -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginTitle">Log In Here</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="/login/" method="POST">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="userNameLogin" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="userNameLogin" name='userNameLogin' placeholder="Enter Your Username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="passLogin" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="passLogin" name="passLogin" placeholder="Enter Your Password" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-outline-secondary">Log in</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    {% block body %}{% endblock body %}
+
+<!-- Footer -->
+<footer class="page-footer " style= 'background-color: rgba(0, 0, 0, 0.8);
+;'>
+
+  <!-- Footer Links -->
+  <div class="container">
+
+    <!-- Grid row-->
+    <div class="row text-center d-flex justify-content-center pt-5 mb-3">
+
+      <!-- Grid column -->
+      <div class="col-md-2 mb-3">
+        <h6 class="text-uppercase font-weight-bold ">
+          <a href="/about/" class='link-light text-decoration-none'>About us</a>
+        </h6>
+      </div>
+      <!-- Grid column -->
+
+      <!-- Grid column -->
+      <div class="col-md-2 mb-3">
+        <h6 class="text-uppercase font-weight-bold">
+          <a href="/blog/" class='link-light text-decoration-none'>Blogs</a>
+        </h6>
+      </div>
+      <!-- Grid column -->
+
+      <!-- Grid column -->
+      <div class="col-md-2 mb-3">
+        <h6 class="text-uppercase font-weight-bold">
+          <a href="/contact/" class='link-light text-decoration-none'>Contact</a>
+        </h6>
+      </div>
+      <!-- Grid column -->
+
+      <!-- Grid column -->
+      <div class="col-md-2 mb-3">
+        <h6 class="text-uppercase font-weight-bold">
+          <a href="/" class='link-light text-decoration-none'>Home</a>
+        </h6>
+      </div>
+      <!-- Grid column -->
+
+
+    </div>
+    <!-- Grid row-->
+    <hr class="white" style="margin: 0 15%;color: white;">
+
+    <!-- Grid row-->
+    <div class="row d-flex text-center justify-content-center mb-md-0 mb-4">
+
+      <!-- Grid column -->
+      <div class="col-md-8 col-12 mt-5 text-light">
+        <!-- Links -->
+        <h6 class="text-uppercase font-weight-bold">Contact</h6>
+        <hr class="light" style=" height: 4px; display:inline-block; width:14rem">
+        <p>
+          <i class="fas fa-home mr-3"></i> New York, NY 10012, US</p>
+        <p>
+          <i class="fas fa-envelope mr-3"></i> info@example.com</p>
+        <p>
+          <i class="fas fa-phone mr-3"></i> + 01 234 567 88</p>
+        <p>
+          <i class="fas fa-print mr-3"></i> + 01 234 567 89</p>
+      <!-- Grid column -->
+
+    </div>
+    <!-- Grid row-->
+
+    <!-- Grid row-->
+    <hr class="clearfix d-md" style="margin: 10% 15% 5%;color:white">
+    <p class="text-light">Follow us On Our Social Media Handle Below</p>
+
+    <div class="row pb-3">
+
+      <!-- Grid column -->
+      <div class="col-md-12">
+
+        <div class="mb-5 flex-center text-center">
+
+          <!-- Facebook -->
+          <a href="https://www.facebook.com/dh_sagar12/" class="fb-ic link-light text-decoration-none" target="_blank">
+            <i class="fab fa-facebook-f fa-lg white-text me-4"> </i>
+          </a>
+          <!-- Twitter -->
+          <a href="https://www.twitter.com/dh_sagar12/" class="tw-ic link-light text-decoration-none" target="_blank">
+            <i class="fab fa-twitter fa-lg white-text me-4"> </i>
+          </a>
+          <!-- Google +-->
+          <a href="https://www.youtube.com/channel/UC5GvSD0F2juGCa-2ODzgy4g" class="gplus-ic link-light text-decoration-none" target="_blank">
+            <i class="fab fa-youtube fa-lg white-text me-4"> </i>
+          </a>
+          <!--Linkedin -->
+          <a href="https://www.linkedin.com/dhsagar123/" class="li-ic link-light text-decoration-none" target="_blank">
+            <i class="fab fa-linkedin-in fa-lg white-text me-4"> </i>
+          </a>
+          <!--Instagram-->
+          <a href="https://www.instagram.com/dh_sagar12/" class="ins-ic link-light text-decoration-none" target="_blank">
+            <i class="fab fa-instagram fa-lg white-text me-4"> </i>
+          </a>
+          <!--Pinterest-->
+          <a href="https://www.pinterest.com/dh_sagar12/" class="pin-ic link-light text-decoration-none"  target="_blank">
+            <i class="fab fa-pinterest fa-lg white-text"> </i>
+          </a>
+
+        </div>
+
+      </div>
+      <!-- Grid column -->
+
+    </div>
+    <!-- Grid row-->
+
+  </div>
+  <!-- Footer Links -->
+
+  <!-- Copyright -->
+  <div class="footer-copyright text-center py-3 text-light">© 2021 Copyright:
+    <a href="https://okentrepreneur.com/" style='color: #ffeb00; text-decoration: none;'>okentrepreneur.com</a>
+  </div>
+  <!-- Copyright -->
+
+</footer>
+<!-- Footer -->
+
+
+    <!-- Optional JavaScript; choose one of the two! -->
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+     <script>
+        {% block js %} {% endblock js %}
+    </script>
+
+    <!-- Bootstrap JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8" crossorigin="anonymous"></script>
+
+    <script>
+        setTimeout(() => {
+            document.getElementById('displayMsg').innerHTML = ''
+                // $('#displayMsg').innerHTML = ''
+        }, 3000);
+    </script>
+
+
+    <!-- Font-awesome JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.js"></script>
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script> -->
+    
+
+    <!-- Option 2: Separate Popper and Bootstrap JS -->
+    <!--
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.min.js" integrity="sha384-lpyLfhYuitXl2zRZ5Bn2fqnhNAKOAaM/0Kr9laMspuaMiZfGmfwRNFh8HlMy49eQ" crossorigin="anonymous"></script>
+    -->
+
+
+</body>
+
+</html>

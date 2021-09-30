@@ -1,0 +1,69 @@
+{% extends 'basic.html' %}
+
+{% block title %}Contact- OkEntrepreneur{% endblock title %}
+{% block contactActive %} active {% endblock contactActive %}
+
+{% block body %}
+  <div class="container my-3">
+  <div class="container space-2 space-lg-3">
+      <!-- Title -->
+      <div class="w-md-80 w-lg-50 text-center mx-md-auto mb-5 mb-md-9">
+        <h1>Tell us about yourself</h1>
+        <p>Whether you have questions or you would just like to say hello, contact us.</p>
+      </div>
+      <!-- End Title -->
+
+      <div class="w-lg-80 mx-auto">
+        <!-- Contacts Form -->
+        <form class="js-validate" method='post' action='/contact/'> {% csrf_token %}
+          <div class="row">
+            <!-- Input -->
+            <div class="col-sm-6 mb-4">
+              <div class="js-form-message">
+                <label for='name' class="input-label">Your name</label>
+                <input type="text" class="form-control" id= 'name' name="name" placeholder="Jeff Fisher" aria-label="Jeff Fisher" required="" data-msg="Please enter your name.">
+              </div>
+            </div>
+            <!-- End Input -->
+
+            <!-- Input -->
+            <div class="col-sm-6 mb-4">
+              <div class="js-form-message">
+                <label class="input-label" for= 'email'>Your email address</label>
+                <input type="email" class="form-control" name="email" id='email' placeholder="jackwayley@gmail.com" aria-label="jackwayley@gmail.com" required="" data-msg="Please enter a valid email address.">
+              </div>
+            </div>
+            <!-- End Input -->
+
+            <div class="w-100"></div>
+
+
+            <!-- Input -->
+            <div class="col-sm-6 mb-4">
+              <div class="js-form-message">
+                <label class="input-label" for='phone'>Your phone number</label>
+                <input type="tel" class="form-control" name="phone" id='phone' placeholder="1-800-643-4500" aria-label="1-800-643-4500" required="" data-msg="Please enter a valid phone number.">
+              </div>
+            </div>
+            <!-- End Input -->
+          </div>
+
+          <!-- Input -->
+          <div class="js-form-message mb-6">
+            <label class="input-label" for='message'>How can we help you?</label>
+            <div class="input-group">
+              <textarea class="form-control" rows="4" name="message" id='message' placeholder="Hi there, I would like to ..." aria-label="Hi there, I would like to ..." required="" data-msg="Please enter a reason."></textarea>
+            </div>
+          </div>
+          <!-- End Input -->
+
+          <div class="text-center">
+            <button type="submit" name='submit' class="btn btn-primary btn-lg transition-3d-hover mb-4 mt-2" id='submit'>Submit</button>
+            <p class="small">We'll get back to you in 1-2 business days.</p>
+          </div>
+        </form>
+        <!-- End Contacts Form -->
+      </div>
+    </div>
+  </div>
+{% endblock body %}

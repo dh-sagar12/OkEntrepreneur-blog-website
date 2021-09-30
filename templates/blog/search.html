@@ -1,0 +1,77 @@
+{% extends 'basic.html' %} {% block title %}Search Results for {{query}} {% endblock title %} {% block blogActive %} active {% endblock blogActive %} {% block body %} {% load static %}
+
+ 
+
+<div class="container my-4">
+    {% if allPost|length < 1 %} 
+    <!-- section to show when search results didn 't match any sarts here -->
+        <div class="container m-5 fs-4">
+        <p>Your search - <b>{{query}}</b> - did not match any documents.</p>
+
+        <p>Suggestions:</P>
+        <ul>
+            <li>Make sure that all words are spelled correctly.</li>
+            <li>Try different keywords.</li>
+            <li>Try more general keywords.</li>
+        </ul>
+        <ul>
+            <h3>Check out  our others blog you may like:</h3>
+            {% for blogs in editorChoice %}
+                <li><a href="{{blogs.get_absolute_url}}">{{blogs.title}}</a></li>
+            {% endfor %}
+        </ul>
+        </div>
+    <!-- section to show when search results didn't match any ends here -->
+    {% else %}
+
+    <!-- section to show when search results match any starts here -->
+
+        <h1>Search Results for <b>{{query}}</b>:</h1>
+
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+            <!--search results column start here -->
+            {% for item in allPost %}
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        <a href="{{item.get_absolute_url}}" style='color: #000000; text-decoration: initial;'>
+                            <img src='/media/{{item.thumbnail}}' class="bd-placeholder-img card-img-top" width="100%" height="225" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false">
+                            <rect width="100%" height="100%" fill="#55595c"></rect>
+                            </img>
+
+                            <div class="card-body">
+                            <a href='https://getbootstrap.com/docs/5.0/components/badge/'><span class="badge bg-dark">{{item.category}}</span></a>
+                                <a href="{{item.get_absolute_url}}" style='color: #000000; text-decoration: initial;'><h6>{{item.title}}</h6></a>
+                                <div class='text-muted'>
+                                    <small class="text-muted">{{item.upload_date}}</small>
+                                    <i class="far fa-eye ml-3 " style='margin-left:6rem;'></i> {{item.viewsCount}}
+                                </div>
+                                <p class="card-text">{{item.content| truncatechars:120 }}</p>
+                                <div class="d-flex justify-content-left align-items-left">
+                                    <div class="btn-group my-2">
+                                        <a href="{{item.get_absolute_url}}" type="button" class="btn btn-md btn-outline-secondary">Read More</a>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+            <!--search results column ends here -->
+
+
+            <!--paginator buttons start here-->
+            <div class=" col-lg offset mb-4">
+                {% if allPost.has_previous %}
+                    <a class="btn btn-md btn-outline-secondary float-start" href="/blog/search/?query={{query}}&page={{allPost.previous_page_number}}">← Previous </a>
+                {% endif %}
+                {% if allPost.has_next %}
+                    <a class=" btn btn-md btn-outline-secondary float-end" href="/blog/search/?query={{query}}&page={{allPost.next_page_number}}">Next →  </a>
+                {% endif %}
+            </div>
+            <!--paginator buttons end here-->
+        </div>
+    {% endif %}
+</div>
+
+{% endblock body %}

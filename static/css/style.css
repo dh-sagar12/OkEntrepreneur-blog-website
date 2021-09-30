@@ -1,0 +1,84 @@
+    /* @media only screen and (max-width: 950px) {
+    .userImg {
+        class: col-2
+    }
+    .userCmt {
+        class: col 
+    }
+} */
+    
+    .carousel-item img {
+        max-width: 100%;
+        height: max-content;
+    }
+    
+    @media only screen and (max-width: 900px) {
+        .carousel-item img {
+            height: auto;
+        }
+    }
+    
+    #welcomeSection {
+        position: relative;
+    }
+    
+    #homeContent {
+        margin: 6rem auto;
+    }
+    
+    #homeContent h1 {
+        color: rgb(249, 253, 0);
+    }
+    
+    #welcomeSection::before {
+        content: "";
+        left: 0;
+        top: 0%;
+        display: block;
+        position: absolute;
+        background-image: url('../images/test.jpg');
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-size: cover;
+        z-index: -1;
+        opacity: 1;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0);
+        background-attachment: fixed;
+    }
+    
+    .thumbnailFigure {
+        overflow: hidden;
+    }
+    
+    .thumbnailFigure img {
+        height: auto;
+        width: 100%;
+        transform: scale(1);
+        transition: 0.3s ease-in-out;
+    }
+    
+    .thumbnailFigure:hover img {
+        transform: scale(1.2);
+    }
+    
+    .featureBlogDetial {
+        position: absolute;
+        z-index: 1;
+    }
+    
+    .featureImg {
+        overflow: hidden;
+    }
+    
+    .featureImg img {
+        height: max-content;
+        width: 100%;
+        opacity: 0.5;
+        transition: 0.3s ease-in-out;
+    }
+    
+    .featureImg:hover img {
+        transform: scale(1.2);
+    }

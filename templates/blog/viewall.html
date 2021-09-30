@@ -1,0 +1,56 @@
+{% extends 'basic.html' %} {% block title %}{{str| title }}- OkEntrepreneur {% endblock title %} {% block body %} {% load static %}
+
+
+
+<div class="container my-4">
+    
+    <!-- section to show when search results match any starts here -->
+
+        <h1><b>All {{str| title}} Posts:</b></h1>
+
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+            <!--search results column start here -->
+            {% for item in allPost %}
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        <a href="{{item.get_absolute_url}}" style='color: #000000; text-decoration: initial;'>
+                            <img src='/media/{{item.thumbnail}}' class="bd-placeholder-img card-img-top" width="100%" height="225" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false">
+                            <rect width="100%" height="100%" fill="#55595c"></rect>
+                            </img>
+
+                            <div class="card-body">
+                            <a href='https://getbootstrap.com/docs/5.0/components/badge/'><span class="badge bg-dark">{{item.category}}</span></a>
+                                <a href="{{item.get_absolute_url}}" style='color: #000000; text-decoration: initial;'><h6>{{item.title}}</h6></a>
+                                <div class='text-muted'>
+                                    <small class="text-muted">{{item.upload_date}}</small>
+                                    <i class="far fa-eye ml-3 " style='margin-left:6rem;'></i> {{item.viewsCount}}
+                                </div>
+                                <p class="card-text">{{item.content| truncatechars:120 }}</p>
+                                <div class="d-flex justify-content-left align-items-left">
+                                    <div class="btn-group my-2">
+                                        <a href="{{item.get_absolute_url}}" type="button" class="btn btn-md btn-outline-secondary">Read More</a>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+            <!--search results column ends here -->
+
+
+            <!--paginator buttons start here-->
+            <div class=" col-lg offset mb-4">
+                {% if allPost.has_previous %}
+                    <a class="btn btn-md btn-outline-secondary float-start" href="/blog/viewall/{{str}}?page={{allPost.previous_page_number}}">← Previous </a>
+                {% endif %}
+                {% if allPost.has_next %}
+                    <a class=" btn btn-md btn-outline-secondary float-end" href="/blog/viewall/{{str}}?page={{allPost.next_page_number}}">Next →  </a>
+                {% endif %}
+            </div>
+            <!--paginator buttons end here-->
+        </div>
+</div>
+
+{% endblock body %}
